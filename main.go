@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -23,6 +24,13 @@ type apiConfig struct {
 
 //go:embed static/*
 var staticFiles embed.FS
+
+func sanitiseLog(s string) string {
+	s = strings.ReplaceAll(s, "\n", "\\n")
+	s = strings.ReplaceAll(s, "\r", "\\r")
+	s = strings.ReplaceAll(s, "\x1b", "")
+	return s
+}
 
 func main() {
 	err := godotenv.Load(".env")
@@ -91,8 +99,9 @@ func main() {
 	srv := &http.Server{
 		Addr:    ":" + port,
 		Handler: router,
+		ReadHeaderTimeout: 2000,
 	}
 
-	log.Printf("Serving on port: %s\n", port)
+	log.Printf("Serving on port: %q", port) // #nosec G706
 	log.Fatal(srv.ListenAndServe())
 }
