@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -24,13 +23,6 @@ type apiConfig struct {
 
 //go:embed static/*
 var staticFiles embed.FS
-
-func sanitiseLog(s string) string {
-	s = strings.ReplaceAll(s, "\n", "\\n")
-	s = strings.ReplaceAll(s, "\r", "\\r")
-	s = strings.ReplaceAll(s, "\x1b", "")
-	return s
-}
 
 func main() {
 	err := godotenv.Load(".env")
